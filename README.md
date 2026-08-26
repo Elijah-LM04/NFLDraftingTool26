@@ -1,4 +1,4 @@
-# NFLDraft
+# NFLDraftingTool26
 
 A NFL player valuation project that uses a custom-built algorithm to estimate player value and positional scarcity for the 2026–27 NFL season.
 I built this to out-draft my football nerd friends.

@@ -7,6 +7,17 @@ namespace NFLDraft.Models
 { 
     public class Player
     {
+        
+        [Ignore]
+        public double QualityScore { get; set; }
+        [Ignore]
+        public double ScarcityScore { get; set; }
+        [Ignore]
+        public double ValueSpreadScore { get; set; }
+        [Ignore]
+        public double PoolScore { get; set; }
+
+
         [Ignore]
         public int Rank { get; set; }
         [Ignore]

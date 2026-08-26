@@ -11,7 +11,7 @@ namespace NFLDraft.Models
         [Ignore]
         public double QualityScore { get; set; }
         [Ignore]
-        public double ScarcityScore { get; set; }
+        public double TierGapScore { get; set; }
         [Ignore]
         public double ValueSpreadScore { get; set; }
         [Ignore]

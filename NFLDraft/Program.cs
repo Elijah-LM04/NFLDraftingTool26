@@ -14,7 +14,7 @@ class Program
 
         //load players
         Reader reader = new Reader();
-        List<Player> players = reader.ReadPlayers().Where(p => p.SetUserid == -1).ToList(); //CONSENSUS
+        List<Player> players = reader.ReadPlayers().Where(p => p.SetUserid == -1 && (p.Pos.ToLower() == "rb" || p.Pos.ToLower() == "wr" || p.Pos.ToLower() == "te"|| p.Pos.ToLower() == "qb")).ToList(); //CONSENSUS
 
         StatFunctions updater = new StatFunctions();
         players = updater.updateKeyStats(players);
@@ -41,37 +41,54 @@ class Program
             .ToList();
 
 
-        int fullList = wr.Count + rb.Count + te.Count + qb.Count;
+        int fullListCount = wr.Count + rb.Count + te.Count + qb.Count;
 
         //calculate game sense for each, then combine
         List<Player> pNew = new List<Player>();
 
         foreach (Player p in wr)
         {
-            updater.GameSense(p, wr, fullList);
+            updater.GameSense(p, wr, players);
             pNew.Add(p);
         }
 
         foreach (Player p in rb)
         {
-            updater.GameSense(p, rb, fullList);
+            updater.GameSense(p, rb, players);
             pNew.Add(p);
         }
 
         foreach (Player p in te)
         {
-            updater.GameSense(p, te, fullList);
+            updater.GameSense(p, te, players);
             pNew.Add(p);
         }
 
         foreach (Player p in qb)
         {
-            updater.GameSense(p, qb, fullList);
+            updater.GameSense(p, qb, players);
             pNew.Add(p);
         }
 
 
         RecalculateGameSense(pNew, user);
+
+        //List<Player> zero = pNew
+        //    .Where(p => p.GameSenseScore <= 0.01)
+        //    .ToList();
+
+        //foreach (Player p in zero)
+        //{
+        //    Console.WriteLine(
+        //        $"{p.Name,-25} " +
+        //        $"GS={p.GameSenseScore:F4} " +
+        //        $"Q={p.QualityScore:F2} " +
+        //        $"S={p.ScarcityScore:F2} " +
+        //        $"V={p.ValueSpreadScore:F2} " +
+        //        $"P={p.PoolScore:F2}"
+        //    );
+        //}
+
         //Start interface
         RunInterface(pNew, user);
     }
@@ -301,13 +318,13 @@ class Program
 
         // Calculate base GameSense
         foreach (Player p in wr)
-            updater.GameSense(p, wr, fullList);
+            updater.GameSense(p, wr, players);
 
         foreach (Player p in rb)
-            updater.GameSense(p, rb, fullList);
+            updater.GameSense(p, rb, players);
 
         foreach (Player p in te)
-            updater.GameSense(p, te, fullList);
+            updater.GameSense(p, te, players);
 
 
         // Apply roster need
@@ -335,7 +352,7 @@ class Program
             search = Console.ReadLine()?.Trim().ToLower() ?? "";
 
             if (string.IsNullOrWhiteSpace(search))
-                return;
+                break; ;
 
             List<Player> results = players
                 .Where(p => p.Name.ToLower().Contains(search))
@@ -641,15 +658,15 @@ class Program
         switch (position.ToUpper())
         {
             case "RB":
-                openSlots = 2 - user.RB.Count;
+                openSlots = (2 + (1 - (int)user.FLEX.Count / 2)) - user.RB.Count;
                 break;
 
             case "WR":
-                openSlots = 2 - user.WR.Count;
+                openSlots = (2 + (1 - (int)user.FLEX.Count / 2)) - user.WR.Count;
                 break;
 
             case "TE":
-                openSlots = 1 - user.TE.Count;
+                openSlots = (1 + (1 - (int)user.FLEX.Count / 2)) - user.TE.Count;
                 break;
 
             case "QB":
@@ -660,7 +677,7 @@ class Program
                 return 1.0;
         }
 
-        // No open starting slots
+        //No open starting slots
         if (openSlots <= 0)
             return 0.0;
 

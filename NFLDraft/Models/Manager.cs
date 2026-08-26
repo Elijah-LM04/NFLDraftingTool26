@@ -11,5 +11,6 @@ namespace NFLDraft.Models
         public List<Player> RB { get; set; } = new List<Player>();
         public List<Player> WR { get; set; } = new List<Player>();
         public List<Player> TE { get; set; } = new List<Player>();
+        public List<Player> FLEX { get; set; } = new List<Player>();
     }
 }

@@ -39,39 +39,41 @@ namespace NFLDraft.Functions
             return p.SsnGms > 0 ? GetProjectedPoints(p) / p.SsnGms : 0;
         }
 
-        public Player GameSense(Player player, List<Player> playerList, int fullList)
+        public Player GameSense(Player player, List<Player> playerList, List<Player> playerListFull)
         {
             //sort playerList
             playerList = playerList.OrderByDescending(p => p.ProjectedPointsPerGame).ToList();
 
+            //get count
+            int fullListCount = playerListFull.Count;
 
             List<double> ppg = GetPPG(playerList);
-            List<double> gaps = GetGaps(ppg);
+            List<double> ppgFull = GetPPG(playerListFull);
 
             double quality = 0;
-            double scarcity = 0;
+            double tierGap = 0;
             double pool = 0;
             double valueSpread = 0;
 
             //QUALITY
-            quality = 100 * ((player.ProjectedPointsPerGame - ppg.Min()) / (ppg.Max() - ppg.Min()));
+            quality = 100 * ((player.ProjectedPointsPerGame - ppgFull.Min()) / (ppgFull.Max() - ppgFull.Min()));
 
-            //SCARCITY
-            List<double> bucket = ppg.Where(p => p < player.ProjectedPointsPerGame).OrderByDescending(p => p).Take(3).ToList();
+            //tierGap
+            List<double> bucket = ppg.Where(p => p < player.ProjectedPointsPerGame).OrderByDescending(p => p).Take(13).ToList();
 
             double difference = bucket.Count > 0 ? bucket.Average() : ppg.Min();
 
-            double rawScarcity = player.ProjectedPointsPerGame - difference;
+            double rawtierGap = player.ProjectedPointsPerGame - difference;
 
-            double maxScarcity = ppg.Max() - ppg.Min();
+            double maxtierGap = ppg.Max() - ppg.Min();
 
-            scarcity = maxScarcity > 0 ? 100.0 * (rawScarcity / maxScarcity) : 0;
+            tierGap = maxtierGap > 0 ? 100.0 * (rawtierGap / maxtierGap) : 0;
 
             //POSITION POOL
-            pool = fullList > 0 ? 100.0 * (1.0 - ((double)playerList.Count / fullList)) : 0;
+            pool = fullListCount > 0 ? 100.0 * (1.0 - ((double)playerList.Count / fullListCount)) : 0;
 
             //POSITION VALUE SPREAD
-            bucket = ppg.Where(p => p < player.ProjectedPointsPerGame).OrderByDescending(p => p).Take(3).ToList();
+            bucket = ppg.Where(p => p < player.ProjectedPointsPerGame).OrderByDescending(p => p).Take(13).ToList();
 
             if (bucket.Count < 1)
             {
@@ -83,12 +85,12 @@ namespace NFLDraft.Functions
 
             //storing info
             player.QualityScore = quality;
-            player.ScarcityScore = scarcity;
+            player.TierGapScore = tierGap;
             player.ValueSpreadScore = valueSpread;
             player.PoolScore = pool;
 
 
-            player.GameSenseScore = Math.Round(quality * 0.60 + scarcity * 0.15 + valueSpread * 0.10 + pool * 0.15, 2);
+            player.GameSenseScore = quality * 0.60 + tierGap * 0.15 + valueSpread * 0.10 + pool * 0.15;
 
             return player;
         }

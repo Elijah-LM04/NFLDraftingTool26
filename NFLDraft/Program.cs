@@ -72,7 +72,7 @@ class Program
 
 
         RecalculateGameSense(pNew, user);
-        // Start interface
+        //Start interface
         RunInterface(pNew, user);
     }
 
@@ -327,58 +327,63 @@ class Program
         Console.WriteLine("║                   REMOVE PLAYER                      ║");
         Console.WriteLine("╚══════════════════════════════════════════════════════╝");
         Console.WriteLine();
+        string search = "";
 
-        Console.Write("  Search player: ");
-        string search = Console.ReadLine()?.Trim().ToLower() ?? "";
-
-        if (string.IsNullOrWhiteSpace(search))
-            return;
-
-        List<Player> results = players
-            .Where(p => p.Name.ToLower().Contains(search))
-            .OrderByDescending(p => p.GameSenseScore)
-            .ToList();
-
-        if (results.Count == 0)
+        do
         {
-            Pause("No players found.");
-            return;
-        }
+            Console.Write("  Search player. Type 1 to exit: ");
+            search = Console.ReadLine()?.Trim().ToLower() ?? "";
 
-        Console.WriteLine();
+            if (string.IsNullOrWhiteSpace(search))
+                return;
 
-        for (int i = 0; i < results.Count; i++)
-        {
-            Player p = results[i];
+            List<Player> results = players
+                .Where(p => p.Name.ToLower().Contains(search))
+                .OrderByDescending(p => p.GameSenseScore)
+                .ToList();
 
-            Console.WriteLine(
-                $"  {i + 1}. {p.Name,-25} " +
-                $"{p.Pos,-3} " +
-                $"{p.ProjectedPointsPerGame,5:F2} PPG " +
-                $"GS: {p.GameSenseScore,6:F2}"
-            );
-        }
+            if (results.Count == 0)
+            {
+                Pause("No players found.");
+                return;
+            }
 
-        Console.WriteLine();
-        Console.Write("  Select player (number): ");
+            Console.WriteLine();
 
-        if (!int.TryParse(Console.ReadLine(), out int selection))
-        {
-            Pause("Invalid selection.");
-            return;
-        }
+            for (int i = 0; i < results.Count; i++)
+            {
+                Player p = results[i];
 
-        if (selection < 1 || selection > results.Count)
-        {
-            Pause("Invalid selection.");
-            return;
-        }
+                Console.WriteLine(
+                    $"  {i + 1}. {p.Name,-25} " +
+                    $"{p.Pos,-3} " +
+                    $"{p.ProjectedPointsPerGame,5:F2} PPG " +
+                    $"GS: {p.GameSenseScore,6:F2}"
+                );
+            }
 
-        Player selected = results[selection - 1];
+            Console.WriteLine();
+            Console.Write("  Select player (number): ");
 
-        players.Remove(selected);
+            if (!int.TryParse(Console.ReadLine(), out int selection))
+            {
+                Pause("Invalid selection.");
+                return;
+            }
 
-        Pause($"{selected.Name} removed from the available player pool.");
+            if (selection < 1 || selection > results.Count)
+            {
+                Pause("Invalid selection.");
+                return;
+            }
+
+            Player selected = results[selection - 1];
+
+            players.Remove(selected);
+        } while (search != "1");
+        
+
+        Pause($"Players removed from the available player pool.");
     }
 
 

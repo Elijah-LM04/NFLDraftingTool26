@@ -8,7 +8,7 @@ class Program
     {
         //make new manager
         Manager user = new Manager();
-        user.Name = "Elijah";
+        user.Name = "User";
 
 
 
@@ -35,8 +35,13 @@ class Program
             .Where(p => p.Pos.ToLower() == "te")
             .ToList();
 
+        //QB
+        List<Player> qb = players
+            .Where(p => p.Pos.ToLower() == "qb")
+            .ToList();
 
-        int fullList = wr.Count + rb.Count + te.Count;
+
+        int fullList = wr.Count + rb.Count + te.Count + qb.Count;
 
         //calculate game sense for each, then combine
         List<Player> pNew = new List<Player>();
@@ -56,6 +61,12 @@ class Program
         foreach (Player p in te)
         {
             updater.GameSense(p, te, fullList);
+            pNew.Add(p);
+        }
+
+        foreach (Player p in qb)
+        {
+            updater.GameSense(p, qb, fullList);
             pNew.Add(p);
         }
 
@@ -147,7 +158,7 @@ class Program
         Console.Clear();
 
         Console.WriteLine("╔══════════════════════════════════════════════════════╗");
-        Console.WriteLine($"║              {user.Name.ToUpper()}'S TEAM");
+        Console.WriteLine($"               {user.Name.ToUpper()}'S TEAM");
         Console.WriteLine("╚══════════════════════════════════════════════════════╝");
         Console.WriteLine();
 
@@ -448,7 +459,7 @@ class Program
         Console.Clear();
 
         Console.WriteLine("╔════════════════════════════════════════════════════════════════════╗");
-        Console.WriteLine("║                       PLAYER SEARCH                               ║");
+        Console.WriteLine("║                       PLAYER SEARCH                                ║");
         Console.WriteLine("╚════════════════════════════════════════════════════════════════════╝");
         Console.WriteLine();
 
@@ -474,32 +485,16 @@ class Program
         foreach (Player p in results)
         {
             Console.WriteLine("  ┌──────────────────────────────────────────────────────────────┐");
-            Console.WriteLine($"  │ {p.Name,-60} │");
+            Console.WriteLine($"  │ {p.Name,-60} ");
             Console.WriteLine("  ├──────────────────────────────────────────────────────────────┤");
-
-            Console.WriteLine(
-                $"  │ GameSense        : {p.GameSenseScore,6:F2}                         │");
-
-            Console.WriteLine(
-                $"  │ PPG              : {p.ProjectedPointsPerGame,6:F2}                         │");
-
-            Console.WriteLine(
-                $"  │ Total            : {p.ProjectedPointsTotal,6:F1}                         │");
-
-            Console.WriteLine("  │                                                              │");
-
-            Console.WriteLine(
-                $"  │ Quality          : {p.QualityScore,6:F2}  × 45%                │");
-
-            Console.WriteLine(
-                $"  │ Scarcity         : {p.ScarcityScore,6:F2}  × 27%                │");
-
-            Console.WriteLine(
-                $"  │ Value Spread     : {p.ValueSpreadScore,6:F2}  × 16%                │");
-
-            Console.WriteLine(
-                $"  │ Position Pool    : {p.PoolScore,6:F2}  × 12%                │");
-
+            Console.WriteLine($"  │ GameSense        : {p.GameSenseScore,6:F2}  ");
+            Console.WriteLine($"  │ PPG              : {p.ProjectedPointsPerGame,6:F2}");
+            Console.WriteLine($"  │ Total            : {p.ProjectedPointsTotal,6:F1}");
+            Console.WriteLine("  │                                                              |");
+            Console.WriteLine($"  │ Quality          : {p.QualityScore,6:F2}  × 60%");
+            Console.WriteLine($"  │ Scarcity         : {p.ScarcityScore,6:F2}  × 15%");
+            Console.WriteLine($"  │ Value Spread     : {p.ValueSpreadScore,6:F2}  × 10%");
+            Console.WriteLine($"  │ Position Pool    : {p.PoolScore,6:F2}  × 15%");
             Console.WriteLine("  └──────────────────────────────────────────────────────────────┘");
             Console.WriteLine();
         }
